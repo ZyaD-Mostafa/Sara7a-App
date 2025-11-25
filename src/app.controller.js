@@ -71,3 +71,13 @@ export default bootstrap;
 
 // http://localhost:3000/path --> origin 
 
+
+
+
+
+
+//expression 
+//^[A-Z][a-z]{1,16}\s{1}[A-Z][a-z]{1,16}$ --> name 
+
+//^01[0125][0-9]{8}$ // --> phone number Eg   the same  ^01[0125]\d{8}$
+//^(002|\+2)?01[0125]\d{8}$ --> phone number start with 002 or +2
