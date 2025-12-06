@@ -44,6 +44,8 @@ export const forgetPasswordSchema = {
         email: generalFields.email.required(),
     })
 }
+
+
 export const updatePasswordSchema = {
     body: joi.object({
         password: generalFields.password.required(),

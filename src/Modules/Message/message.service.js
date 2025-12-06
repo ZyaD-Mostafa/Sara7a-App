@@ -32,11 +32,24 @@ export const createMessage = async (req, res, next) => {
 
 
 export const getMessages = async (req, res, next) => {
+
+    const { page, limit } = req.query;
+    const { content } = req.query;
+    const pageNumber = parseInt(page) || "";
+    const limitNumber = parseInt(limit) || "";
+    const skip = (pageNumber - 1) * limitNumber
     const messages = await dbServic.find({
         model: messageModel,
-        populate: [{ path: "receiverId", select: "firstName lastName email -_id" }] , 
-        select : "-__v -_id"
-
+        // populate: [{ path: "receiverId", select: "firstName lastName email receiverId -_id" }] ,
+        filter: {
+            content: {
+                $regex: content,
+                $options: "i"
+            }
+        },
+        select: "-__v",
+        skip,
+        limit: limitNumber
     })
 
     return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })

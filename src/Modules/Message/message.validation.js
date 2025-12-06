@@ -6,8 +6,19 @@ export const sendMessageSchema = {
     })
     ,
 
-    params:joi.object({
-        receiverId : generalFields.id.required()
+    params: joi.object({
+        receiverId: generalFields.id.required(),
+        page: joi.number().positive(),
+        limit: joi.number().positive(),
     })
-    
+
+}
+
+
+export const getMessageSchema = {
+    query: joi.object({
+        page: joi.number().positive(),
+        limit: joi.number().positive(),
+        content: joi.string(),
+    })
 }

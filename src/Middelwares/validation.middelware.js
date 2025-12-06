@@ -15,9 +15,6 @@ export const validation = (schema) => {
             if (validationReault.error) {
                 validationErrors.push({ key, details: validationReault.error.details });
             }
-
-
-
         }
 
         if (validationErrors.length) {
@@ -40,7 +37,7 @@ export const generalFields = {
         "any.required": "First name is required"
     }),
     lastName: joi.string().min(2).max(20),
-    email: joi.string().email({ minDomainSegments: 2, maxDomainSegments: 5, tlds: { allow: ["com", "org"] } }),
+    email: joi.string().email({ minDomainSegments: 2, maxDomainSegments: 5, tlds: { allow: ["com", "org", "net"] } }),
     password: joi.string(),
     confirmPassword: joi.string().valid(joi.ref("password")),
     gender: joi.string().valid(...Object.values(genderEnum)).default(genderEnum.MALE),
@@ -48,21 +45,18 @@ export const generalFields = {
     otp: joi.string(),
     id: joi.string().custom((value, helper) => {
         return (Types.ObjectId.isValid(value) || helper.message("Invalid Object id format"))
-    }) , 
+    }),
 
-    file : {
-        fieldname : joi.string(),
-        originalname : joi.string(),
-        encoding : joi.string(),
-        mimetype : joi.string(),
-        size : joi.number().positive(),
-        destination : joi.string(),
-        filename : joi.string(),
-        path : joi.string(),
-        finalPath : joi.string(),
+    file: {
+        fieldname: joi.string(),
+        originalname: joi.string(),
+        encoding: joi.string(),
+        mimetype: joi.string(),
+        size: joi.number().positive(),
+        destination: joi.string(),
+        filename: joi.string(),
+        path: joi.string(),
+        finalPath: joi.string(),
     }
-
-
-
 }
 

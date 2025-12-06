@@ -8,10 +8,12 @@ export const findOne = async ({ model, filter = {}, select = "", populate = [] }
 }
 
 
-export const find = async ({ model, filter = {}, select = "", populate = [] }) => {
+export const find = async ({ model, filter = {}, select = "", populate = []  , skip="" , limit =""}) => {
     return await model.find(filter)
         .select(select)
         .populate(populate)
+        .skip(skip)
+        .limit(limit)
 }
 export const findById = async ({ model, id = "", select = "", populate = [] }) => {
     return await model
