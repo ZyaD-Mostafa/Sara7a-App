@@ -16,3 +16,6 @@ app.listen( port, () => {
 
 
 // deploy Sara7a App 
+
+
+//ec2-13-51-205-98.eu-north-1.compute.amazonaws.com

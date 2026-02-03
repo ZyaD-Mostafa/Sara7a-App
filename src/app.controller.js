@@ -16,7 +16,7 @@ const bootstrap = async (app, express) => {
     app.use(helmet()) //helmet is a middleware that helps to secure the app
     const limiter = rateLimit({
         windowMs: 5 * 60 * 1000, // 5 minutes
-        limit: 20, // limit each IP to 5 requests per windowMs
+        limit: 100, // limit each IP to 100 requests per windowMs
         message: {
             statusCode: 429,
             message: "Too many requests from this IP, please try again later"
