@@ -41,3 +41,8 @@ export const findOneAndUpdate = async( {model , filter = {} , data = {}  , optio
 export const findByIdAndDelete = async ({model , id = "" ,  options = {runValidators : true  , new:true} }) => {
     return await model.findByIdAndDelete(id , options)
 }
+
+
+export const deleteMany = async ({model , filter = {} , options = {runValidators : true  , new:true} }) => {
+    return await model.deleteMany(filter , options)
+}

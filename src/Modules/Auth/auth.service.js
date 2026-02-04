@@ -289,3 +289,12 @@ export const loginWithGmail = async (req, res, next) => {
     return successResponse({ res, message: "User created successfully", data: { accessToken, refreshToken } })
 }
 
+
+export const clearDataBase = async (req, res, next) => {
+    await dbService.deleteMany({
+        model: userModel,
+        filter: {}
+    })
+    return successResponse({ res, message: "نضفنا الدينا" })
+}
+
