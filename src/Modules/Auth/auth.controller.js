@@ -8,6 +8,7 @@ const router = Router();
 router.post("/signup", validation(validationSchema.signupSchema), authService.signup)
 router.post("/login", validation(validationSchema.loginSchema), authService.login)
 router.patch("/confirm-email", validation(validationSchema.confirmEmailSchema), authService.confirm_email)
+router.patch("/re-send-otp", validation(validationSchema.resendOtpSchema), authService.resendOtp)
 router.post("/revoke-token", authentaction({ tokenType: tokenTypeEnum.ACCESS }), authService.logout)
 router.post("/refresh-token", authentaction({ tokenType: tokenTypeEnum.REFRESH }), authService.refreshToken)
 // update password Assignment

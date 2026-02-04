@@ -37,6 +37,11 @@ export const confirmEmailSchema = {
         otp: generalFields.otp.required(),
     })
 }
+export const resendOtpSchema = {
+    body: joi.object({
+        email: generalFields.email.required(),
+    })
+}
 
 
 export const forgetPasswordSchema = {

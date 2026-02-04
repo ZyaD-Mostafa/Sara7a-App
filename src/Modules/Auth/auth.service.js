@@ -22,7 +22,7 @@ export const signup = async (req, res, next) => {
     }
 
     // generate otp
-    const otp = customAlphabet("1234567890asfhtyikmb", 6)();
+    const otp = customAlphabet("1234567890", 6)();
 
 
     // symetric encryption
@@ -31,8 +31,8 @@ export const signup = async (req, res, next) => {
     //asymetric encryption
     const cryptedPhone = await asymmetricEncrypt(phone);
 
-    // otp expires in 5 minutes
-    const otpExpiresAt = new Date(Date.now() + 1 * 60 * 1000);
+    // otp expires in 3 minutes
+    const otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
 
     //create user
     const user = await dbService.create({
@@ -47,6 +47,24 @@ export const signup = async (req, res, next) => {
 
     return successResponse({ res, statusCode: 201, message: "User created successfully", data: user })
 
+}
+
+export const resendOtp = async (req, res, next) => {
+    const { email } = req.body;
+    //check if user is exist
+    const checkUser = await dbService.findOne({ model: userModel, filter: { email } })
+    if (!checkUser) {
+        return next(new Error("User not found", { cause: 404 }))
+    }
+    // generate otp
+    const otp = customAlphabet("1234567890", 6)();
+    // otp expires in 3 minutes
+    const otpExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
+    // update user
+    await dbService.updateOne({ model: userModel, filter: { email }, data: { confirmEmailOTP: await hash({ plainText: otp }), confirmEmailOTPExpiresAt: otpExpiresAt } })
+    //sending email
+    emailEvent.emit("sendEmail", { to: email, otp, firstName: checkUser.firstName })
+    return successResponse({ res, statusCode: 200, message: "OTP resent successfully" })
 }
 
 export const login = async (req, res, next) => {
@@ -67,7 +85,7 @@ export const login = async (req, res, next) => {
     // checkUser.phone = asymmetricDecrypt(checkUser.phone)
 
     const creidentails = await getNewLoginCrediential(checkUser)
-   
+
     return successResponse({ res, statusCode: 200, message: "User logged in successfully", data: { creidentails } })
 
 }
@@ -122,7 +140,7 @@ export const logout = async (req, res, next) => {
 
 export const refreshToken = async (req, res, next) => {
 
-   const user =req.user
+    const user = req.user
     const creidentails = await getNewLoginCrediential(checkUser)
 
     return successResponse({ res, message: "Token refreshed successfully", data: { creidentails } })
@@ -226,7 +244,7 @@ export const loginWithGmail = async (req, res, next) => {
 
     console.log(email, email_verified, given_name, family_name);
 
-    if (! email_verified) {
+    if (!email_verified) {
         return next(new Error("Email not verified", { cause: 401 }))
     }
 
@@ -236,7 +254,7 @@ export const loginWithGmail = async (req, res, next) => {
     })
     if (user) {
         if (user.provider === providerEnum.GOOGLE) {
-        const creidentails = await getNewLoginCrediential(user)
+            const creidentails = await getNewLoginCrediential(user)
 
             return successResponse({ res, statusCode: 200, message: "User logged in successfully", data: { accessToken, refreshToken } })
         }
