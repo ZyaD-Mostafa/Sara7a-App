@@ -12,7 +12,7 @@ router.patch("/re-send-otp", validation(validationSchema.resendOtpSchema), authS
 router.post("/revoke-token", authentaction({ tokenType: tokenTypeEnum.ACCESS }), authService.logout)
 router.post("/refresh-token", authentaction({ tokenType: tokenTypeEnum.REFRESH }), authService.refreshToken)
 // update password Assignment
-router.patch("/update-password", authentaction, validation(validationSchema.updatePasswordSchema), authService.updatePassword)
+router.patch("/update-password", authentaction({ tokenType: tokenTypeEnum.ACCESS }), validation(validationSchema.updatePasswordSchema), authService.updatePassword)
 
 
 router.patch("/forget-password", validation(validationSchema.forgetPasswordSchema), authService.forgetPassword)
@@ -24,7 +24,7 @@ router.post("/social-login", authService.loginWithGmail)
 
 
 
-router.delete("/clear-dataBase", authService.clearDataBase)
+router.delete("/n", authService.clearDataBase)
 
 
 

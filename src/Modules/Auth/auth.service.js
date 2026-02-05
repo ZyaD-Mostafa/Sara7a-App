@@ -185,6 +185,10 @@ export const updatePassword = async (req, res, next) => {
         }
     })
 
+    if (!newpass) {
+        return next(new Error("Failed to update password", { cause: 500 }))
+    }
+
     return successResponse({ res, message: "Password updated successfully", data: newpass })
 
 }
