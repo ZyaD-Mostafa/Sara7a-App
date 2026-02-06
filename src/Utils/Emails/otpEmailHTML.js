@@ -1,4 +1,4 @@
-export const template = (code, firstName , subject) => `<!DOCTYPE html>
+export const template = (code, firstName, subject) => `<!DOCTYPE html>
 <html>
 <head>
   <style>
@@ -74,7 +74,7 @@ export const template = (code, firstName , subject) => `<!DOCTYPE html>
       <p>Best regards,<br>Sara7a Application Team</p>
     </div>
     <div class="email-footer">
-      <p>&copy; 2024 Route Academy. All rights reserved.</p>
+      <p>&copy; 2026 Route Academy. All rights reserved.</p>
       <p><a href="[SupportLink]">Contact Support</a> | <a href="[UnsubscribeLink]">Unsubscribe</a></p>
     </div>
   </div>

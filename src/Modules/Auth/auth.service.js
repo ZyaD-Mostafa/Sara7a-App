@@ -131,7 +131,7 @@ export const logout = async (req, res, next) => {
     await dbService.create(
         {
             model: tokenModel,
-            data: [{ userId: req.user._id, jwtid: req.decodedToken.jti, expiresIn: new Date(req.decodedToken.exp * 1000) }]
+            data: [{ userId: req.user._id, jwtid: req.decoded.jti, expiresIn: new Date(req.decoded.exp * 1000) }]
         });
     return successResponse({ res, message: "Logged out successfully" })
 }
