@@ -23,7 +23,9 @@ router.patch("/update-profile", authentaction({
 
 
 router.patch("/profile-image",
-    authentaction,
+    authentaction({
+        tokenType: tokenTypeEnum.ACCESS
+    }),
     authorization({ accessRoles: [roleEnum.USER] }),
     // localFileUpload({
     //     customPath: "User",
@@ -32,7 +34,7 @@ router.patch("/profile-image",
     // validation(profileImageSchema),
     // fileValidationMagicNumber({ allowedTypes: [...fileValidation.images, ...fileValidation.audio] })
 
-    cloudFileUploadMulter({ validation: [...fileValidation.images, ...fileValidation.audio] }).single("profileImage"),
+    cloudFileUploadMulter({ validation: [...fileValidation.images] }).single("profileImage"),
     userService.updateProfileImage)
 
 

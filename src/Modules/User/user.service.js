@@ -65,21 +65,41 @@ export const updateProfileImage = async (req, res, next) => {
 
     //upload in cloud 
 
-    const { public_id, secure_url } = await cloudinaryConfig().uploader.upload(req.file.path, {
-        folder: `Sara7aApp/Users/${req.user._id}`
-    })
+    if (!req.file) {
+        return next(new Error("Image is required", { cause: 400 }));
+    }
+
+    const oldPublicId = req.user.cloudProfileImage?.public_id;
+
+
+    console.log("Uploading to cloudinary...");
+
+    const { public_id, secure_url } =
+        await cloudinaryConfig().uploader.upload(req.file.path, {
+            folder: `Sara7aApp/Users/${req.user._id}`,
+        });
+
+    console.log("Uploading to cloudinary...");
+
 
     const user = await dbService.findOneAndUpdate({
         model: userModel,
         filter: { _id: req.user._id },
-        data: { cloudProfileImage: { public_id, secure_url }, $inc: { __v: 1 } }
-    })
+        data: {
+            cloudProfileImage: { public_id, secure_url },
+            $inc: { __v: 1 },
+        },
+    });
+
     if (!user) {
-        return next(new Error("User not found", { cause: 404 }))
+        // rollback الصورة الجديدة لو اليوزر مش موجود
+        await cloudinaryConfig().uploader.destroy(public_id);
+        return next(new Error("User not found", { cause: 404 }));
     }
 
-    if (req.user.cloudProfileImage?.public_id) {
-        await cloudinaryConfig().uploader.destroy(req.user.cloudProfileImage.public_id)
+    // حذف الصورة القديمة بعد نجاح التحديث
+    if (oldPublicId) {
+        await cloudinaryConfig().uploader.destroy(oldPublicId);
     }
 
     return successResponse({ res, message: "image updated successfully", data: { public_id, secure_url } })
