@@ -12,6 +12,9 @@ const router = Router();
 
 
 router.get("/", userService.allUsers)
+router.get("/getUser",authentaction({
+    tokenType: tokenTypeEnum.ACCESS
+}) , authorization({ accessRoles: [roleEnum.USER , roleEnum.ADMIN ] }) ,  userService.getUser)
 
 
 router.patch("/update-profile", authentaction({

@@ -2,8 +2,6 @@ import tokenModel from "../DB/Models/token.model.js";
 import { getSignature, verifyToken } from "../Utils/tokens/token.utils.js";
 import * as dbService from "../DB/dbService.js"
 import userModel from "../DB/Models/user.model.js";
-import { decode } from "jsonwebtoken";
-
 
 export const tokenTypeEnum = {
     ACCESS: "ACCESS",

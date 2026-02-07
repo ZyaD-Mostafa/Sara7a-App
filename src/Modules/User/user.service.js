@@ -33,6 +33,11 @@ export const allUsers = async (req, res, next) => {
 }
 
 
+export const getUser = async (req, res, next) => {
+    return successResponse({ res, message: 'User fetched successsfuly', data: { userData: req.user } })
+}
+
+
 export const updateProfile = async (req, res, next) => {
     const { firstName, lastName, gender } = req.body;
     const verifyBlackListToken = await dbService.findOne({ model: tokenModel, filter: { jwtid: req.decoded.jti } })
