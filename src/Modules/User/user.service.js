@@ -245,6 +245,9 @@ export const deleteAccount = async (req, res, next) => {
         if (user.freezedBy === roleEnum.ADMIN) {
             return next(new Error("Account freezed by admin", { cause: 401 }));
         }
+        if (!user.freezedAt) {
+            return next(new Error("Account not freezed", { cause: 401 }));
+        }
 
         await dbService.findByIdAndDelete({
             model: userModel,
