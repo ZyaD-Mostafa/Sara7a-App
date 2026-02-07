@@ -66,9 +66,9 @@ router.patch ("{/:userId}/restore-account" ,  authentaction({
 
 
 
-router.delete("/:userId/delete-account",  authentaction({
+router.delete("/{:userId}/delete-account",  authentaction({
     tokenType : tokenTypeEnum.ACCESS 
-}) , authorization ({accessRoles: [roleEnum.ADMIN ]}), validation(deleteAccountSchema), userService.deleteAccount)
+}) , authorization ({accessRoles: [roleEnum.ADMIN , roleEnum.USER]}), validation(deleteAccountSchema), userService.deleteAccount)
 
 // add vaild layer after our normal check file mime type 
 

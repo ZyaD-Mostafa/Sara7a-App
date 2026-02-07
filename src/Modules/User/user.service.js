@@ -223,17 +223,62 @@ export const restoreAccount = async (req, res, next) => {
 
 export const deleteAccount = async (req, res, next) => {
     const { userId } = req.params;
+    const authUser = req.user;
+
+    // ======================
+    // USER deletes himself
+    // ======================
+    if (!userId) {
+        if (authUser.role !== roleEnum.USER) {
+            return next(new Error("Not authorized", { cause: 401 }));
+        }
+
+        const user = await dbService.findById({
+            model: userModel,
+            id: authUser._id,
+        });
+
+        if (!user) {
+            return next(new Error("User not found", { cause: 404 }));
+        }
+
+        if (user.freezedBy === roleEnum.ADMIN) {
+            return next(new Error("Account freezed by admin", { cause: 401 }));
+        }
+
+        await dbService.findByIdAndDelete({
+            model: userModel,
+            id: authUser._id,
+        });
+
+        return successResponse({ res, message: "Account deleted successfully" });
+    }
+
+    // ======================
+    // ADMIN deletes user
+    // ======================
+    if (authUser.role !== roleEnum.ADMIN) {
+        return next(new Error("Not authorized", { cause: 401 }));
+    }
 
     const user = await dbService.findOne({
         model: userModel,
-        filter: { _id: userId, freezedAt: { $exists: true }, freezedBy: { $exists: true } }
-    })
+        filter: {
+            _id: userId,
+            freezedAt: { $exists: true },
+        },
+    });
 
     if (!user) {
-        return next(new Error("User not found or this account is not freezed", { cause: 404 }))
+        return next(
+            new Error("User not found or account not freezed", { cause: 404 })
+        );
     }
 
-    await dbService.findByIdAndDelete({ model: userModel, id: userId })
-    return successResponse({ res, message: "Account deleted successfully" })
+    await dbService.findByIdAndDelete({
+        model: userModel,
+        id: userId,
+    });
 
-}
+    return successResponse({ res, message: "Account deleted successfully" });
+};
