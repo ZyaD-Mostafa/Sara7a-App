@@ -1,0 +1,9 @@
+node_modules
+uploads/
+logs/
+dist/
+test.md
+src/config/.env.dev
+.env
+.src/config/.env.example
+.src/config/.env.dev

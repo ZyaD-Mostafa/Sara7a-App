@@ -1,0 +1,48 @@
+// Repositary Desgin pattren for database opreations
+
+
+export const findOne = async ({ model, filter = {}, select = "", populate = [] }) => {
+    return await model.findOne(filter)
+        .select(select)
+        .populate(populate)
+}
+
+
+export const find = async ({ model, filter = {}, select = "", populate = []  , skip="" , limit =""}) => {
+    return await model.find(filter)
+        .select(select)
+        .populate(populate)
+        .skip(skip)
+        .limit(limit)
+}
+export const findById = async ({ model, id = "", select = "", populate = [] }) => {
+    return await model
+        .findById(id)
+        .select(select)
+        .populate(populate)
+}
+
+export const create = async ({ model, data = [{}], options = { validateBeforeSave: true } }) => {
+    return await model.create(data, options)
+}
+
+export const updateOne = async( {model , filter = {} , data = {}  , options = {runValidators : true}}) => {
+    return await model.updateOne(filter , data , options)
+}
+
+export const findByIdAndUpdate = async( {model , id = "" , data = {}  , options = {runValidators : true  , new:true}}) => {
+    return await model.findByIdAndUpdate(id , data , options)
+}
+export const findOneAndUpdate = async( {model , filter = {} , data = {}  , options = {runValidators : true  , new:true}}) => {
+    return await model.findOneAndUpdate(filter , data , options)
+}
+
+
+export const findByIdAndDelete = async ({model , id = "" ,  options = {runValidators : true  , new:true} }) => {
+    return await model.findByIdAndDelete(id , options)
+}
+
+
+export const deleteMany = async ({model , filter = {} , options = {runValidators : true  , new:true} }) => {
+    return await model.deleteMany(filter , options)
+}
