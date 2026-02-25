@@ -231,17 +231,17 @@ export const resetPassword = async (req, res, next) => {
 
 
 async function verfiyGoogleAccount({ idToken }) {
-    try{
-    const client = new OAuth2Client();
+    try {
+        const client = new OAuth2Client();
 
-    const ticket = await client.verifyIdToken({
-        idToken,
-        audience: process.env.GOOGLE_CLIENT_ID
-    });
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
 
-    const payload = ticket.getPayload();
+        const payload = ticket.getPayload();
 
-    return payload
+        return payload
     }
     catch (error) {
         console.error("GOOGLE VERIFICATION ERROR:", error);
@@ -250,51 +250,51 @@ async function verfiyGoogleAccount({ idToken }) {
 }
 
 export const loginWithGmail = async (req, res, next) => {
-    try{
-    const { idToken } = req.body;
-    console.log("ID TOKEN:", idToken);
-    const { email, email_verified, given_name, family_name } = await verfiyGoogleAccount({ idToken })
+    try {
+        const { idToken } = req.body;
+        console.log("ID TOKEN:", idToken);
+        const { email, email_verified, given_name, family_name } = await verfiyGoogleAccount({ idToken })
 
-    console.log(email, email_verified, given_name, family_name);
+        console.log(email, email_verified, given_name, family_name);
 
-    if (!email_verified) {
-        return next(new Error("Email not verified", { cause: 401 }))
-    }
-
-    const user = await dbService.findOne({
-        model: userModel,
-        filter: { email }
-    })
-    if (user) {
-        if (user.provider === providerEnum.GOOGLE) {
-            const creidentails = await getNewLoginCrediential(user)
-
-            return successResponse({ res, statusCode: 200, message: "User logged in successfully", data: { creidentails } })
+        if (!email_verified) {
+            return next(new Error("Email not verified", { cause: 401 }))
         }
-    }
+
+        const user = await dbService.findOne({
+            model: userModel,
+            filter: { email }
+        })
+        if (user) {
+            if (user.provider === providerEnum.GOOGLE) {
+                const creidentails = await getNewLoginCrediential(user)
+
+                return successResponse({ res, statusCode: 200, message: "User logged in successfully", data: { creidentails } })
+            }
+        }
 
 
-    const newUser = await dbService.create({
-        model: userModel,
-        data: [{
-            firstName: given_name,
-            lastName: family_name,
-            email,
-            confirmEmail: Date.now(),
-            provider: providerEnum.GOOGLE,
-            shareId: uuidv4()
-        }]
-    })
+        const newUser = await dbService.create({
+            model: userModel,
+            data: [{
+                firstName: given_name,
+                lastName: family_name || "N/A",
+                email,
+                confirmEmail: Date.now(),
+                provider: providerEnum.GOOGLE,
+                shareId: uuidv4()
+            }]
+        })
 
-    const creidentails = await getNewLoginCrediential(newUser)
+        const creidentails = await getNewLoginCrediential(newUser)
 
 
-    return successResponse({ res, message: "User created successfully", data: { creidentails } })
+        return successResponse({ res, message: "User created successfully", data: { creidentails } })
     }
     catch (error) {
-    console.error("LOGIN WITH GOOGLE ERROR:", error);
-    next(error);
-  }
+        console.error("LOGIN WITH GOOGLE ERROR:", error);
+        next(error);
+    }
 }
 
 
