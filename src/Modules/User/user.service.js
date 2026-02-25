@@ -7,31 +7,6 @@ import { successResponse } from "../../Utils/successResponse.utiles.js"
 import { getNewLoginCrediential } from "../../Utils/tokens/token.utils.js"
 
 
-export const allUsers = async (req, res, next) => {
-    let users = await dbService.find({
-        model: userModel,
-        filter: {},
-        populate: [{ path: "messages", select: "content -_id -receiverId" }]
-    })
-    // symetric decryption
-    // users = users.map((user => {
-    //     return {
-    //         ...user._doc,
-    //         phone: decrypt(user.phone)
-    //     }
-
-    // }))
-
-    //asymetric decryption
-    // users = users.map((user) => {
-    //     return {
-    //         ...user._doc,
-    //         phone: asymmetricDecrypt(user.phone)
-    //     }
-    // })
-
-    return successResponse({ res, message: 'All user fetched successsfuly', data: { users } })
-}
 
 
 export const getUser = async (req, res, next) => {
@@ -45,7 +20,13 @@ export const updateProfile = async (req, res, next) => {
     if (verifyBlackListToken) {
         return next(new Error("Token is Revoked", { cause: 401 }))
     }
-    const user = await dbService.findByIdAndUpdate({ model: userModel, id: req.user._id, data: { firstName, lastName, gender, $inc: { __v: 1 } } })
+
+    const user = await dbService.findOneAndUpdate({ model: userModel, filter: { _id: req.user._id, freezedAt: { $exists: false } }, data: { firstName, lastName, gender, $inc: { __v: 1 } }, options: { new: true, runValidators: true } })
+    if (!user) {
+        return next(
+            new Error("User is frozen or not found", { cause: 403 })
+        )
+    }
     return successResponse({ res, message: "Profile updated successfully", data: { user } })
 }
 
@@ -85,7 +66,7 @@ export const updateProfileImage = async (req, res, next) => {
 
     const user = await dbService.findOneAndUpdate({
         model: userModel,
-        filter: { _id: req.user._id },
+        filter: { _id: req.user._id, freezedAt: { $exists: false } },
         data: {
             cloudProfileImage: { public_id, secure_url },
             $inc: { __v: 1 },
@@ -122,7 +103,7 @@ export const coverImages = async (req, res, next) => {
 
     const user = await dbService.findOneAndUpdate({
         model: userModel,
-        filter: { _id: req.user._id },
+        filter: { _id: req.user._id, freezedAt: { $exists: false } },
         data: { cloudCoverImage: attachments, $inc: { __v: 1 } }
     })
     if (!user) {
@@ -296,6 +277,9 @@ export const getShareProfile = async (req, res, next) => {
         select: "firstName lastName cloudProfileImage shareId"
 
     })
+    if (user.freezedAt) {
+        return next(new Error("Account freezed", { cause: 401 }))
+    }
     if (!user) {
         return next(new Error("User not found", { cause: 404 }))
     }
@@ -334,34 +318,34 @@ export const getPublicProfile = async (req, res, next) => {
 };
 
 export const emailLogin = async (req, res, next) => {
-  const { token } = req.body;
+    const { token } = req.body;
 
-  const record = await emailLoginTokenModel.findOne({ token });
+    const record = await emailLoginTokenModel.findOne({ token });
 
-  if (!record)
-    return next(new Error("Invalid link", { cause: 401 }));
+    if (!record)
+        return next(new Error("Invalid link", { cause: 401 }));
 
-  if (record.used)
-    return next(new Error("Link already used", { cause: 401 }));
+    if (record.used)
+        return next(new Error("Link already used", { cause: 401 }));
 
-  if (record.expiresAt < new Date())
-    return next(new Error("Link expired", { cause: 401 }));
+    if (record.expiresAt < new Date())
+        return next(new Error("Link expired", { cause: 401 }));
 
-  const user = await userModel.findById(record.userId);
+    const user = await userModel.findById(record.userId);
 
-  if (!user)
-    return next(new Error("User not found", { cause: 404 }));
+    if (!user)
+        return next(new Error("User not found", { cause: 404 }));
 
-  // 🔐 اعمل Login حقيقي
-  const credentials = await getNewLoginCrediential(user);
+    // 🔐 اعمل Login حقيقي
+    const credentials = await getNewLoginCrediential(user);
 
-  // ⛔ اقفل اللينك
-  record.used = true;
-  await record.save();
+    // ⛔ اقفل اللينك
+    record.used = true;
+    await record.save();
 
-  return successResponse({
-    res,
-    message: "Logged in successfully",
-    data: { credentials }
-  });
+    return successResponse({
+        res,
+        message: "Logged in successfully",
+        data: { credentials }
+    });
 };

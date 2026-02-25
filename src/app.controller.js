@@ -1,6 +1,7 @@
 import userController from "./Modules/User/user.controller.js";
 import authController from "./Modules/Auth/auth.controller.js";
 import messageController from "./Modules/Message/message.controller.js";
+import adminController from "./Modules/Admin/admin.controller.js";
 import connDB from "./DB/conn-DB.js"
 import { globalErrorHandller } from "./Utils/globleErrorHandller.utiles.js";
 import cors from "cors";
@@ -33,6 +34,7 @@ const bootstrap = async (app, express) => {
     app.use("/api/v1/user", userController);
     app.use("/api/v1/auth", authController);
     app.use("/api/v1/message", messageController);
+    app.use("/api/v1/admin", adminController);
 
     app.get("/", (req, res) => {
         // return  res.send(`<script>alert("XSS Attack!!")</script>`)

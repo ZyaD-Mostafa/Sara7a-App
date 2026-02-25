@@ -15,10 +15,3 @@ export const sendMessageSchema = {
 }
 
 
-export const getMessageSchema = {
-    query: joi.object({
-        page: joi.number().positive(),
-        limit: joi.number().positive(),
-        content: joi.string(),
-    })
-}

@@ -68,29 +68,3 @@ export const getMyMessages = async (req, res, next) => {
 
     return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })
 }
-export const getMessages = async (req, res, next) => {
-
-    const { page, limit } = req.query;
-    const { content } = req.query;
-    const pageNumber = parseInt(page) || "";
-    const limitNumber = parseInt(limit) || "";
-    const skip = (pageNumber - 1) * limitNumber
-
-    const filter = {};
-    if (content) {
-        filter.content = {
-            $regex: content,
-            $options: "i"
-        };
-    }
-    const messages = await dbServic.find({
-        model: messageModel,
-        // populate: [{ path: "receiverId", select: "firstName lastName email receiverId -_id" }] ,
-        filter,
-        select: "-__v",
-        skip,
-        limit: limitNumber
-    })
-
-    return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })
-}

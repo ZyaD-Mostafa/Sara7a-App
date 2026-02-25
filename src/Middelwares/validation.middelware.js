@@ -37,7 +37,7 @@ export const generalFields = {
         "any.required": "First name is required"
     }),
     lastName: joi.string().min(2).max(20),
-    email: joi.string().email({ minDomainSegments: 2, maxDomainSegments: 5, tlds: { allow: ["com", "org", "net"] } }),
+    email: joi.string().email({ minDomainSegments: 2, maxDomainSegments: 5, tlds: { allow: ["com", "org", "net" ] } }),
     password: joi
         .string()
         .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[#?!@$ %^&*-]).{8,}$/)
