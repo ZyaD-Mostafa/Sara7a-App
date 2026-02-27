@@ -286,7 +286,7 @@ export const loginWithGmail = async (req, res, next) => {
             }]
         })
 
-        const creidentails = await getNewLoginCrediential(newUser)
+        const creidentails = await getNewLoginCrediential(newUser[0])
 
 
         return successResponse({ res, message: "User created successfully", data: { creidentails } })
