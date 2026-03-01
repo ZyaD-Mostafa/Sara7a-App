@@ -15,9 +15,9 @@ export const login = async (req, res, next) => {
 
     const { email, password } = req.body;
     //check if user is exist
-    let checkUser = await dbService.findOne({ model: userModel, filter: { email , role: roleEnum.ADMIN } }); // null || doc 
+    let checkUser = await dbService.findOne({ model: userModel, filter: { email, role: roleEnum.ADMIN } }); // null || doc 
     if (!checkUser) {
-        return next(new Error("User not found ", { cause: 404 }))
+        return next(new Error("User not found OR not an admin ", { cause: 404 }))
     }
 
     if (!(await compare({ plainText: password, hash: checkUser.password }))) {
