@@ -27,12 +27,12 @@ export const createMessage = async (req, res, next) => {
             receiverId: receiver._id
         }],
     });
-       // ✅ Generate email token
+    // ✅ Generate email token
     const emailToken = await createEmailLoginToken(receiver._id);
-    const inboxLink = `http://localhost:5173/#/MyMessages/inbox?token=${emailToken}`;
+    const inboxLink = `http://localhost:5173/#/email-login-redirect?token=${emailToken}`;
 
     emailEvent.emit("newMessage", { to: receiver.email, inboxLink })
-    
+
 
     return successResponse({ res, message: 'Message sent successfully ', data: { message } })
 
