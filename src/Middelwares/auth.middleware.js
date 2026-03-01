@@ -16,7 +16,7 @@ const decodedTokenFun = async ({ authentaction, tokenType = tokenTypeEnum.ACCESS
     }
 
     let signature = await getSignature({ singatureLevel: Bearer });
-    
+
     const decoded = verifyToken({
         token,
         secretKey: tokenType === tokenTypeEnum.ACCESS ? signature.accessSignature : signature.refershSignature
@@ -28,7 +28,8 @@ const decodedTokenFun = async ({ authentaction, tokenType = tokenTypeEnum.ACCESS
     const revokedToken = await dbService.findOne({
         model: tokenModel,
         filter: {
-            jwtid: decoded.jti
+            jwtid: decoded.jti,
+            type: tokenType
         }
     })
 

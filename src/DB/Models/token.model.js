@@ -6,10 +6,16 @@ const toeknSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "User",
         required: true
     },
+    type: {
+        type: String,
+        enum: ["ACCESS", "REFRESH"],
+        required: true,
+    },
     expiresIn: {
         type: Date,
         required: true
-    }
+    },
+
 },
     {
         timestamps: true

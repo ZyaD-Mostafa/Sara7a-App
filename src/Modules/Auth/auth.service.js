@@ -129,11 +129,22 @@ export const confirm_email = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
     // you must be logged in to logout 
-    await dbService.create(
+    await tokenModel.insertMany([
         {
-            model: tokenModel,
-            data: [{ userId: req.user._id, jwtid: req.decoded.jti, expiresIn: new Date(req.decoded.exp * 1000) }]
-        });
+            userId: req.user._id,
+            jwtid: req.decoded.jti,
+            expiresIn: new Date(req.decoded.exp * 1000),
+            type: "ACCESS",
+
+        },
+        {
+            userId: req.user._id,
+            jwtid: req.decoded.jti,
+            expiresIn: new Date(req.decoded.exp * 1000),
+            type: "REFRESH",
+        }
+    ])
+
     return successResponse({ res, message: "Logged out successfully" })
 }
 
@@ -142,9 +153,9 @@ export const logout = async (req, res, next) => {
 export const refreshToken = async (req, res, next) => {
 
     const user = req.user
-    const creidentails = await getNewLoginCrediential(checkUser)
+    const creidentails = await getNewLoginCrediential(user)
 
-    return successResponse({ res, message: "Token refreshed successfully", data: { creidentails } })
+    return successResponse({ res, message: "Token refreshed successfully", data: { accessToken: creidentails.accessToken } })
 }
 
 

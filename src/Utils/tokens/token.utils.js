@@ -67,7 +67,6 @@ export const getNewLoginCrediential = async (user) => {
 }
 
 
-
 export const createEmailLoginToken = async (userId) => {
     const token = uuid();
 
