@@ -1,6 +1,12 @@
 import joi from "joi"
 import { generalFields } from "../../Middelwares/validation.middelware.js"
 
+export const loginSchema = {
+    body: joi.object({
+        email: generalFields.email.required(),
+        password: generalFields.password.required(),
+    })
+}
 
 export const getMessageSchema = {
     query: joi.object({

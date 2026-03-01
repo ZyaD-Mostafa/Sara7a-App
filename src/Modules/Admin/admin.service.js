@@ -15,7 +15,7 @@ export const login = async (req, res, next) => {
 
     const { email, password } = req.body;
     //check if user is exist
-    let checkUser = await dbService.findOne({ model: userModel, filter: { email } }); // null || doc 
+    let checkUser = await dbService.findOne({ model: userModel, filter: { email , role: roleEnum.ADMIN } }); // null || doc 
     if (!checkUser) {
         return next(new Error("User not found ", { cause: 404 }))
     }

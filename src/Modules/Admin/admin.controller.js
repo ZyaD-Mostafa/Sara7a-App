@@ -21,4 +21,7 @@ router.post("/Create-User-Admin", authentaction({
 }), authorization({ accessRoles: [roleEnum.ADMIN] }), validation(validationSchema.createUserSchema), adminService.createUser)
 
 
+router.post("/login", validation(validationSchema.loginSchema), adminService.login)
+
+
 export default router
