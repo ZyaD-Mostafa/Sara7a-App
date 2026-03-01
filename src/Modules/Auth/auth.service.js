@@ -311,7 +311,7 @@ export const loginWithGmail = async (req, res, next) => {
 
 export const clearDataBase = async (req, res, next) => {
     const user = await userModel.findOneAndDelete({
-        email: req.query.email
+        email: req.params.email
     })
     await dbService.deleteMany({
         model: userModel,

@@ -24,7 +24,7 @@ router.post("/social-login", authService.loginWithGmail)
 
 
 
-router.delete("/clear-dataBase", authService.clearDataBase)
+router.delete("/clear-dataBase/:email", authService.clearDataBase)
 
 
 
