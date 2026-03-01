@@ -288,7 +288,7 @@ export const getShareProfile = async (req, res, next) => {
             id: user._id,
             name: `${user.firstName} ${user.lastName}`,
             image: user.cloudProfileImage?.secure_url || null,
-            shareLink: `${process.env.FRONT_URL}/u/${user.shareId}`
+            shareLink: `${process.env.FRONT_URL}/#/u/${user.shareId}`
         }
     })
 }
