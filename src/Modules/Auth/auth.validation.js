@@ -21,7 +21,12 @@ export const signupSchema = {
 
 
 
-
+export const loginUserSchema = {
+    body: joi.object({
+        email: generalFields.email.required(),
+        password: generalFields.password.required(),
+    })
+}
 
 
 
