@@ -6,7 +6,7 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
       font-family: 'Cairo', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f0f4f8;
+      background-color: #eef2f7;
     }
     .email-container {
       max-width: 480px;
@@ -15,13 +15,13 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border-top: 6px solid #f59e0b;
+      border-top: 6px solid #1e3a8a;
     }
     .email-header {
       text-align: center;
       padding: 25px 15px;
-      background: linear-gradient(90deg, #f59e0b, #fbbf24);
-      color: #fff;
+      background-color: #1e3a8a;
+      color: #ffffff;
     }
     .email-header h1 {
       margin: 0;
@@ -39,8 +39,8 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
     }
     .message-snippet {
       padding: 14px;
-      background-color: #fef3c7;
-      border-left: 5px solid #f59e0b;
+      background-color: #e0e7ff;
+      border-left: 5px solid #1e3a8a;
       border-radius: 8px;
       margin: 20px 0;
       font-style: italic;
@@ -50,27 +50,25 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
       display: inline-block;
       text-align: center;
       padding: 14px 28px;
-      background-color: #f59e0b;
+      background-color: #1e3a8a;
       color: #fff !important;
       text-decoration: none;
       font-weight: 600;
       font-size: 16px;
       border-radius: 8px;
-      transition: all 0.2s ease-in-out;
     }
     .view-button:hover {
-      background-color: #d97706;
-      transform: translateY(-2px);
+      background-color: #1e40af;
     }
     .email-footer {
       text-align: center;
       padding: 15px;
-      background-color: #f0f4f8;
+      background-color: #f4f6fb;
       font-size: 13px;
       color: #555;
     }
     .email-footer a {
-      color: #f59e0b;
+      color: #1e3a8a;
       text-decoration: none;
       margin: 0 5px;
     }
@@ -79,11 +77,10 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
 <body>
   <div class="email-container">
     <div class="email-header">
-      <div class="emoji">📬✨</div>
-      <h1>💌 يلا! جاتلك رسالة جديدة!</h1>
+      <h1>جاتلك رسالة جديدة</h1>
     </div>
     <div class="email-body">
-      <p>أهه شوف مين جابلك المفاجأة 😎</p>
+      <p>شوف مين باعتلك مفاجأة 😉</p>
       <div class="message-snippet">
         ${messageSnippet}
       </div>
@@ -93,7 +90,7 @@ export const creativeMessageTemplateArabic = (messageSnippet) => `<!DOCTYPE html
     </div>
     <div class="email-footer">
       <p>&copy; 2026 تطبيق صراحة. كل الحقوق محفوظة</p>
-      <p><a href="[SupportLink]">تواصل مع الدعم</a> | <a href="[UnsubscribeLink]">إلغاء  الاشتراك</a></p>
+      <p><a href="[SupportLink]">تواصل مع الدعم</a> | <a href="[UnsubscribeLink]">إلغاء الاشتراك</a></p>
     </div>
   </div>
 </body>
