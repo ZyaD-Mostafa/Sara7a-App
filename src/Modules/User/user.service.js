@@ -146,13 +146,15 @@ export const restoreAccount = async (req, res, next) => {
 
     const { userId } = req.params;
 
+    /* ================= ADMIN ================= */
+
     if (userId && req.user.role === roleEnum.ADMIN) {
         const user = await dbService.findById({ model: userModel, id: userId })
         if (!user) {
             return next(new Error("User not found", { cause: 404 }))
         }
-        if (user.freezedBy.toString() !== req.user._id.toString()) {
-            return next(new Error("this account freezed by owner of the account", { cause: 401 }))
+        if (!user.freezedAt || !user.freezedBy) {
+            return next(new Error("Account is not freezed", { cause: 401 }))
         }
 
         const updatedUser = await dbService.findOneAndUpdate({
@@ -172,8 +174,15 @@ export const restoreAccount = async (req, res, next) => {
 
         return successResponse({ res, message: "Account restored successfully", data: { updatedUser } })
 
+
+        /* ================= USER ================= */
+
+
     } if (!userId && req.user.role === roleEnum.USER) {
         const user = await dbService.findById({ model: userModel, id: req.user._id })
+        if (!user.freezedAt || !user.freezedBy) {
+            return next(new Error("Account is not freezed", { cause: 400 }));
+        }
 
         if (user.freezedBy?.toString() !== req.user._id.toString()) {
             return next(new Error("your accound frezzed by admin", { cause: 401 }))
@@ -185,7 +194,6 @@ export const restoreAccount = async (req, res, next) => {
                 _id: req.user._id,
                 freezedAt: { $exists: true },
                 freezedBy: { $exists: true },
-                freezedBy: req.user._id
             },
             data: {
                 $unset: { freezedAt: 1, freezedBy: 1 },
@@ -200,7 +208,6 @@ export const restoreAccount = async (req, res, next) => {
 
 
 }
-
 
 
 export const deleteAccount = async (req, res, next) => {
