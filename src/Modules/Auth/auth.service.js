@@ -313,10 +313,6 @@ export const clearDataBase = async (req, res, next) => {
     const user = await userModel.findOneAndDelete({
         email: req.params.email
     })
-    await dbService.deleteMany({
-        model: userModel,
-        filter: {}
-    })
     return successResponse({ res, message: "نضفنا الدينا" })
 }
 
