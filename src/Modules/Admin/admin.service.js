@@ -64,28 +64,23 @@ export const getMessages = async (req, res, next) => {
 
 
 export const allUsers = async (req, res, next) => {
+    const { content } = req.query;
+    let filter = {};
+    if (content) {
+        filter = {
+            $or: [
+                { firstName: { $regex: content, $options: "i" } },
+                { lastName: { $regex: content, $options: "i" } },
+                { email: { $regex: content, $options: "i" } }
+            ]
+        };
+    }
+
     let users = await dbService.find({
         model: userModel,
-        filter: {},
-        populate: [{ path: "messages", select: "content -_id -receiverId" }]
+
+        filter,
     })
-    // symetric decryption
-    // users = users.map((user => {
-    //     return {
-    //         ...user._doc,
-    //         phone: decrypt(user.phone)
-    //     }
-
-    // }))
-
-    //asymetric decryption
-    // users = users.map((user) => {
-    //     return {
-    //         ...user._doc,
-    //         phone: asymmetricDecrypt(user.phone)
-    //     }
-    // })
-
     return successResponse({ res, message: 'All user fetched successsfuly', data: { users } })
 }
 
