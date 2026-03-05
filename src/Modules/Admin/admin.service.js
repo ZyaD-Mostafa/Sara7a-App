@@ -64,7 +64,11 @@ export const getMessages = async (req, res, next) => {
 
 
 export const allUsers = async (req, res, next) => {
+    const { page, limit } = req.query;
     const { content } = req.query;
+    const pageNumber = parseInt(page) || "";
+    const limitNumber = parseInt(limit) || "";
+    const skip = (pageNumber - 1) * limitNumber
     let filter = {};
     if (content) {
         filter = {
@@ -80,6 +84,8 @@ export const allUsers = async (req, res, next) => {
         model: userModel,
 
         filter,
+        skip,
+        limit: limitNumber
     })
     return successResponse({ res, message: 'All user fetched successsfuly', data: { users } })
 }
