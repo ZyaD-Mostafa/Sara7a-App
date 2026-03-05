@@ -78,7 +78,6 @@ const userSchema = new mongoose.Schema({
     forgetPasswordOTP: String,
     forgetPasswordOTPExpiresAt: Date,
 
-
     freezedAt: Date,
     freezedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
@@ -90,6 +89,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    
 },
     {
         toJSON: {

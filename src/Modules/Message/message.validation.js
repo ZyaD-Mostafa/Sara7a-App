@@ -14,4 +14,10 @@ export const sendMessageSchema = {
 
 }
 
+export const favMessageSchema = {
+    params: joi.object({
+        messageId: generalFields.id.required(),
+    })
+}
+
 

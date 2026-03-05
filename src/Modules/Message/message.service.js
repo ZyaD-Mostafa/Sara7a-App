@@ -68,3 +68,23 @@ export const getMyMessages = async (req, res, next) => {
 
     return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })
 }
+
+
+export const favMessage = async (req, res, next) => {
+    const { messageId } = req.params;
+    const userId = req.user._id;
+
+    const message = await dbServic.findOne({
+        model: messageModel,
+        filter: { _id: messageId, receiverId: userId }
+    });
+    if (!message) {
+        return next(new Error("Message not found / you are not the owner of this message"));
+    }
+
+    let fav = message.fav ? null : new Date()
+    message.fav = fav;
+    await message.save();
+
+    return successResponse({ res, message: fav ? "Message favourited successfully " : "Message un-favourited successfully ", data: { message } })
+}
