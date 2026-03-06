@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@upstash/redis": "^1.36.3",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
@@ -27,6 +28,7 @@
     "multer": "^2.0.2",
     "nanoid": "^5.1.6",
     "nodemailer": "^7.0.9",
+    "redis": "^5.11.0",
     "uuid": "^13.0.0"
   }
 }

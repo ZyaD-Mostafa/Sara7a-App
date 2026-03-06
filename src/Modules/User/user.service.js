@@ -2,6 +2,7 @@ import * as dbService from "../../DB/dbService.js"
 import emailLoginTokenModel from "../../DB/Models/emailLoginToken.model.js"
 import tokenModel from "../../DB/Models/token.model.js"
 import userModel, { roleEnum } from "../../DB/Models/user.model.js"
+import { redis } from "../../DB/Redis/ConnRedis.js"
 import { cloudinaryConfig } from "../../Utils/multer/cloudinary.config.js"
 import { successResponse } from "../../Utils/successResponse.utiles.js"
 import { getNewLoginCrediential } from "../../Utils/tokens/token.utils.js"
@@ -10,6 +11,23 @@ import { getNewLoginCrediential } from "../../Utils/tokens/token.utils.js"
 
 
 export const getUser = async (req, res, next) => {
+
+    const cachKey = `user:${req.user._id}`;
+    const cachedUser = await redis.get(cachKey);
+    if (cachedUser) {
+        return successResponse({ res, message: 'User fetched successsfuly', data: { userData: JSON.parse(cachedUser) } })
+    }
+    try {
+        await redis.set(
+            cachKey,
+            JSON.stringify({ user: req.user, cachedAt: new Date().toISOString() }),
+            { ex: 60 } // 60 seconds
+        );
+        console.log("Redis key set:", cachKey);
+    } catch (err) {
+        console.error("Redis error:", err);
+    }
+
     return successResponse({ res, message: 'User fetched successsfuly', data: { userData: req.user } })
 }
 
