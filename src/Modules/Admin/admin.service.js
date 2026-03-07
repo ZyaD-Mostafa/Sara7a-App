@@ -8,6 +8,7 @@ import { compare, hash } from "../../Utils/Hashing/hashing.utils.js";
 import { generateToken, getNewLoginCrediential, verifyToken } from "../../Utils/tokens/token.utils.js";
 import messageModel from "../../DB/Models/message.model.js";
 import { v4 as uuidv4 } from "uuid"
+import { redis } from "../../DB/Redis/ConnRedis.js";
 
 
 
@@ -43,6 +44,12 @@ export const getMessages = async (req, res, next) => {
     const limitNumber = parseInt(limit) || "";
     const skip = (pageNumber - 1) * limitNumber
 
+
+    const cachedMessages = await redis.get(`messages:admin`)
+    if (cachedMessages) {
+        return successResponse({ res, message: "All messages Feteched successfully ", data: { messages: cachedMessages } })
+    }
+
     const filter = {};
     if (content) {
         filter.content = {
@@ -59,6 +66,9 @@ export const getMessages = async (req, res, next) => {
         limit: limitNumber
     })
 
+
+    await redis.setex(`messages:admin`, 20, JSON.stringify(messages))
+
     return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })
 }
 
@@ -69,6 +79,12 @@ export const allUsers = async (req, res, next) => {
     const pageNumber = parseInt(page) || "";
     const limitNumber = parseInt(limit) || "";
     const skip = (pageNumber - 1) * limitNumber
+
+    const cachedUsers = await redis.get(`users:admin`)
+    if (cachedUsers) {
+        return successResponse({ res, message: "All users Feteched successfully ", data: { users: cachedUsers } })
+    }
+
     let filter = {};
     if (content) {
         filter = {
@@ -87,6 +103,9 @@ export const allUsers = async (req, res, next) => {
         skip,
         limit: limitNumber
     })
+
+    await redis.setex(`users:admin`, 15, JSON.stringify(users))
+
     return successResponse({ res, message: 'All user fetched successsfuly', data: { users } })
 }
 

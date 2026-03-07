@@ -1,8 +1,9 @@
+import { get } from "mongoose"
 import * as dbService from "../../DB/dbService.js"
 import emailLoginTokenModel from "../../DB/Models/emailLoginToken.model.js"
 import tokenModel from "../../DB/Models/token.model.js"
 import userModel, { roleEnum } from "../../DB/Models/user.model.js"
-// import { redis } from "../../DB/Redis/ConnRedis.js"
+import { redis } from "../../DB/Redis/ConnRedis.js"
 import { cloudinaryConfig } from "../../Utils/multer/cloudinary.config.js"
 import { successResponse } from "../../Utils/successResponse.utiles.js"
 import { getNewLoginCrediential } from "../../Utils/tokens/token.utils.js"
@@ -11,25 +12,27 @@ import { getNewLoginCrediential } from "../../Utils/tokens/token.utils.js"
 
 
 export const getUser = async (req, res, next) => {
+    try {
+        const cachedUser = await redis.get(`user:${req.user._id}`)
 
-    // const cachKey = `user:${req.user._id}`;
-    // const cachedUser = await redis.get(cachKey);
-    // if (cachedUser) {
-    //     return successResponse({ res, message: 'User fetched successsfuly', data: { userData: JSON.parse(cachedUser) } })
-    // }
-    // try {
-    //     await redis.set(
-    //         cachKey,
-    //         JSON.stringify({ user: req.user, cachedAt: new Date().toISOString() }),
-    //         { ex: 60 } // 60 seconds
-    //     );
-    //     console.log("Redis key set:", cachKey);
-    // } catch (err) {
-    //     console.error("Redis error:", err);
-    // }
+        if (cachedUser) {
+            console.log(typeof cachedUser);
+            console.log(`After get user:${req.user._id}`);
 
-    return successResponse({ res, message: 'User fetched successsfuly', data: { userData: req.user } })
+            return successResponse({ res, message: 'User fetched successsfuly', data: cachedUser })
+        }
+        const user = await redis.setex(`user:${req.user._id}`, 60, JSON.stringify(req.user))
+        console.log(typeof user);
+        console.log(`After set user:${req.user._id}`);
+        return successResponse({ res, message: 'User fetched successsfuly', data: { userData: req.user } })
+
+    } catch (error) {
+        console.error("Error in getUser:", error);
+        return next(new Error("Something went wrong"));
+    }
+
 }
+
 
 
 export const updateProfile = async (req, res, next) => {
@@ -296,6 +299,11 @@ export const deleteAccount = async (req, res, next) => {
 
 
 export const getShareProfile = async (req, res, next) => {
+
+    const cachedUser = await redis.get(`user:share:${req.user._id}`)
+    if (cachedUser) {
+        return successResponse({ res, message: "Share profile fetched successfully", data: cachedUser })
+    }
     const user = await dbService.findById({
         model: userModel,
         id: req.user._id,
@@ -308,6 +316,7 @@ export const getShareProfile = async (req, res, next) => {
     if (!user) {
         return next(new Error("User not found", { cause: 404 }))
     }
+    await redis.setex(`user:share:${req.user._id}`, 30 * 60, JSON.stringify(user))
     return successResponse({
         res, message: "Share profile fetched successfully", data: {
             id: user._id,
@@ -322,6 +331,11 @@ export const getShareProfile = async (req, res, next) => {
 export const getPublicProfile = async (req, res, next) => {
     const { shareId } = req.params;
 
+    const cachedUser = await redis.get(`user:public:${shareId}`)
+    if (cachedUser) {
+        return successResponse({ res, message: "Public profile fetched successfully", data: cachedUser })
+    }
+
     const user = await dbService.findOne({
         model: userModel,
         filter: { shareId },
@@ -331,6 +345,8 @@ export const getPublicProfile = async (req, res, next) => {
     if (!user) {
         return next(new Error("User not found", { cause: 404 }));
     }
+
+    await redis.setex(`user:public:${shareId}`, 60 * 60, user)
 
     return successResponse({
         res,

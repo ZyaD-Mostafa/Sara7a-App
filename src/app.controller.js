@@ -10,6 +10,7 @@ import { attachRouterWithLogher } from "./Utils/logger/logger.util.js";
 import helmet from "helmet";
 import { corsOption } from "./Utils/Cors/cors.util.js";
 import { rateLimit } from "express-rate-limit"
+import { checkRedisConnection } from "./DB/Redis/ConnRedis.js";
 const bootstrap = async (app, express) => {
 
     app.use(express.json());
@@ -26,6 +27,7 @@ const bootstrap = async (app, express) => {
     })
     app.use(limiter)
     connDB();
+    await checkRedisConnection();
     attachRouterWithLogher(app, "/api/v1/auth", authController, "auth.log")
     attachRouterWithLogher(app, "/api/v1/user", userController, "users.log")
     attachRouterWithLogher(app, "/api/v1/message", messageController, "message.log")
@@ -71,15 +73,15 @@ export default bootstrap;
 
 /// cors --> cross origin resource sharing
 
-// http://localhost:3000/path --> origin 
+// http://localhost:3000/path --> origin
 
 
 
 
 
 
-//expression 
-//^[A-Z][a-z]{1,16}\s{1}[A-Z][a-z]{1,16}$ --> name 
+//expression
+//^[A-Z][a-z]{1,16}\s{1}[A-Z][a-z]{1,16}$ --> name
 
 //^01[0125][0-9]{8}$ // --> phone number Eg   the same  ^01[0125]\d{8}$
 //^(002|\+2)?01[0125]\d{8}$ --> phone number start with 002 or +2

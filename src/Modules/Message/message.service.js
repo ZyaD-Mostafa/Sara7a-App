@@ -4,6 +4,7 @@ import * as dbServic from "../../DB/dbService.js";
 import { successResponse } from "../../Utils/successResponse.utiles.js";
 import { createEmailLoginToken } from "../../Utils/tokens/token.utils.js";
 import { emailEvent } from "../../Utils/Events/email.event.utils.js";
+import { redis } from "../../DB/Redis/ConnRedis.js";
 
 
 export const createMessage = async (req, res, next) => {
@@ -47,7 +48,10 @@ export const getMyMessages = async (req, res, next) => {
     const pageNumber = parseInt(page) || "";
     const limitNumber = parseInt(limit) || "";
     const skip = (pageNumber - 1) * limitNumber
-
+    const cachedMessages = await redis.get(`messages:${userId}`)
+    if (cachedMessages) {
+        return successResponse({ res, message: "All messages Feteched successfully ", data: { messages: cachedMessages } })
+    }
     const filter = {
         receiverId: userId
     };
@@ -65,6 +69,9 @@ export const getMyMessages = async (req, res, next) => {
         skip,
         limit: limitNumber
     })
+
+
+    const newCachedMessages = await redis.setex(`messages:${userId}`, 30, JSON.stringify(messages))
 
     return successResponse({ res, message: "All messages Feteched successfully ", data: { messages } })
 }
