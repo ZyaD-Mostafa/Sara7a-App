@@ -226,6 +226,7 @@ export const resetPassword = async (req, res, next) => {
 
     await dbService.findOneAndUpdate({
         model: userModel,
+        filter: { email },
         data: {
             password: await hash({ plainText: password }),
             $unset: {
