@@ -26,6 +26,7 @@ const bootstrap = async (app, express) => {
         legacyHeaders: false
     })
     app.use(limiter)
+    app.set('trust proxy', 1);
     connDB();
     await checkRedisConnection();
     attachRouterWithLogher(app, "/api/v1/auth", authController, "auth.log")
