@@ -4,3 +4,5 @@ logs/
 dist/
 test.md
 ./src/config
+src/config/.env.dev
+src/config/.env.prod
