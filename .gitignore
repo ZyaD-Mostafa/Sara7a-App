@@ -2,7 +2,9 @@ node_modules
 uploads/
 logs/
 dist/
-test.md
-./src/config
+
+# env files
+.env
+.env*
 src/config/.env.dev
 src/config/.env.prod
