@@ -3,4 +3,4 @@ uploads/
 logs/
 dist/
 test.md
-
+./src/config
